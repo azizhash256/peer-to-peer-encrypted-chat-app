@@ -1,11 +1,13 @@
 
+
 ---
 
 # `requirements.txt`
-cryptography>=41.0.0
+cryptography>=42.0.0
 
-yaml
-Copy code
+
+
+Tkinter is included with standard Python installs (on some Linux distros you may need `python3-tk` package).
 
 ---
 
@@ -15,14 +17,19 @@ pycache/
 venv/
 .env
 .DS_Store
+transcripts/
 
-yaml
-Copy code
 
 ---
 
 # `LICENSE` (MIT)
 ```text
+MIT License
+
+Copyright (c) 2025 <Your Name>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+...
 MIT License
 
 Copyright (c) 2025 ...
