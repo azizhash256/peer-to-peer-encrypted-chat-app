@@ -1,53 +1,67 @@
 # peer-to-peer-encrypted-chat-app
+# LanternChat — Peer-to-Peer Encrypted Chat (GUI)
 
-# PeerTalk — P2P Encrypted Chat (No Server, GUI)
+**LanternChat** is a tiny, serverless, peer-to-peer chat app.  
+Two users connect directly via IP/port, derive a shared key using **X25519** (ECDH), verify a short **safety code**, and then chat using **AES-GCM** end-to-end encryption. No cloud, no accounts.
 
-**PeerTalk** is a tiny peer-to-peer chat app with end-to-end encryption and a simple Tkinter GUI.  
-There’s **no central server**: one peer clicks **Host** (listens on a port), the other **Connects** using the host’s IP:port. Both enter the same **Room Code** (a shared secret) and chat.
-
-## Crypto design (high level)
-- **Key agreement:** Ephemeral **X25519** (ECDH)
-- **Key derivation:** **HKDF-SHA256** deriving a 32-byte session key
-- **AEAD:** **AESGCM** (AES-256-GCM) with 12-byte nonces
-- **Integrity:** AEAD provides authenticity; we also include a **SHA-256** hash of the plaintext in the message body (auditable)
-- **SAS / Fingerprint:** Both peers see a short verification string derived from both public keys + Room Code. Compare verbally to detect MITM.
-
-> ⚠️ NAT note: peers must be able to reach each other by IP:port. This works on the same LAN, via VPN, or with port forwarding. No TURN/STUN is included.
+> ⚠️ NAT note: If peers are not on the same LAN/Wi-Fi, the host will likely need to forward a TCP port on their router (or use a VPN). There is no relay server.
 
 ## Features
-- P2P, no server
-- GUI (Tkinter), single file run
-- ECDH handshake → AES-GCM session
-- Unique per-message nonces (counter with random prefix)
-- Message SHA-256 included for auditing
-- SAS fingerprint check to verify peers
-- Light, dependency-minimal
+- **No server**: direct TCP between two devices.
+- **Strong crypto**: X25519 key exchange → HKDF-SHA256 → 256-bit AES-GCM.
+- **Safety code**: both sides see the same short code if there is no MITM.
+- **Optional passphrase**: bind the session to a shared secret for extra protection.
+- **Simple GUI**: host/connect, send/receive, save transcript (local, optional).
+- **Cross-platform**: Python + Tkinter.
 
-## Quick start
-`bash
+## Quick Start
+```bash
+git clone https://github.com/<your-username>/lanternchat.git
+cd lanternchat
 python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
+# Windows: venv\Scripts\activate
+source venv/bin/activate
 pip install -r requirements.txt
 python main.py
-How to use
-Both users agree a Room Code (shared secret string).
+How to Use
+On one device (the host):
 
-One user clicks Host, chooses a port (e.g., 7777), and tells their IP:port to the other.
+Open the app → set a Port (e.g., 5005) → optionally set a Session Passphrase → click Host.
 
-The other user enters the host’s IP and port and clicks Connect.
+Share your IP and Port with your friend (and the passphrase if you set one).
 
-Both will see a Fingerprint value. Compare out-of-band (voice/message). If they match, your session is safe.
+On the other device (the joiner):
 
-Start chatting.
+Enter the host’s IP and Port, the same Session Passphrase if used, then click Connect.
 
-Troubleshooting
-If the connection fails, check firewalls and NAT. On LAN, use the local IP of the host machine (e.g., 192.168.1.20).
+Verify Safety Code:
 
-If fingerprints don’t match, do not continue—you may be under MITM.
+Both apps will display a short Safety Code (e.g., 7F-BC-1A-30).
 
-Security notes
-Without a trusted directory or public-key pinning, P2P ECDH is susceptible to MITM unless users verify the Fingerprint. Always compare it.
+Confirm the codes match via phone/voice/video.
 
-Room Code strengthens authentication of the handshake (used in HKDF/SAS inputs).
+Click Codes Match to unlock chatting. (If they don’t match, disconnect.)
 
-AES-GCM requires unique nonces per session key; this app uses a random prefix + monotonic counter to avoid reuse.
+Chat:
+
+Type messages and press Enter or Send.
+
+Use Save Transcript to export the current chat to a local text file.
+
+Security Design
+Key exchange: Ephemeral X25519 (each session) over TCP; peers exchange public keys and random salts.
+
+Key derivation: HKDF-SHA256 with combined salts (order-independent) and optional PSK (passphrase) mixed into the info.
+
+Encryption: AES-GCM (256-bit) with a fresh 96-bit nonce per message.
+
+Authentication: GCM tag ensures integrity; a Safety Code (hash of both public keys in canonical order) helps humans detect MITM.
+
+No storage: Keys live in memory only; passphrase is not stored.
+
+Limitations / Notes
+No NAT traversal; use port forwarding / VPN if needed.
+
+Safety code verification is manual (like Signal’s safety number).
+
+This is a demo/reference app; do your own review before production use.
