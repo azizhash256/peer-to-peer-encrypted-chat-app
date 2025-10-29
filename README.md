@@ -13,6 +13,31 @@ Two users connect directly via IP/port, derive a shared key using **X25519** (EC
 - **Optional passphrase**: bind the session to a shared secret for extra protection.
 - **Simple GUI**: host/connect, send/receive, save transcript (local, optional).
 - **Cross-platform**: Python + Tkinter.
+update 
+# LanternChat — P2P Encrypted Chat (GUI)
+
+Serverless peer-to-peer chat & file transfer with end-to-end encryption.
+
+## What’s inside
+- No server: one peer clicks **Host**, the other **Connects** by IP:Port.
+- X25519 ECDH → HKDF-SHA256 → AES-GCM(256) encryption per message.
+- **Safety Code** verification (word-by-word/QR) to detect MITM.
+- **Encrypted file transfer** (chunked) with progress & receipts.
+- Optional **Session Passphrase (PSK)** mixed into key derivation.
+- GUI built with Tkinter (cross-platform).
+
+> NAT note: If you’re not on the same LAN, host needs port forwarding or use a VPN.
+
+## Quick Start
+```bash
+git clone https://github.com/<your-username>/lanternchat.git
+cd lanternchat
+python -m venv venv
+# Windows: venv\Scripts\activate
+source venv/bin/activate
+pip install -r requirements.txt
+python main.py
+
 
 ## Quick Start
 ```bash
