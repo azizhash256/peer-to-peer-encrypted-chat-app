@@ -1,3 +1,36 @@
+
+---
+
+# `requirements.txt`
+cryptography>=41.0.0
+
+yaml
+Copy code
+
+---
+
+# `.gitignore`
+pycache/
+*.pyc
+venv/
+.env
+.DS_Store
+
+yaml
+Copy code
+
+---
+
+# `LICENSE` (MIT)
+```text
+MIT License
+
+Copyright (c) 2025 ...
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+...
+
+
 MIT License
 
 Copyright (c) 2025 azizhash256
